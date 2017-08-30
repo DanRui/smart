@@ -31,10 +31,10 @@
 	
 	<!-- 以下为Hessian和Dubbo提供Token验证和授权RPC服务，二选一即可，默认Hessian -->
 	<!-- Hessian -->
-	<bean id="authenticationRpcService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+	<!-- <bean id="authenticationRpcService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
 		<property name="serviceUrl" value="${sso.server.url}/rpc/authenticationRpcService" />
 		<property name="serviceInterface" value="com.smart.sso.rpc.AuthenticationRpcService" />
-	</bean>
+	</bean> -->
 	<!-- Dubbo
 	<import resource="dubbo-consumer.xml" />
 	 -->

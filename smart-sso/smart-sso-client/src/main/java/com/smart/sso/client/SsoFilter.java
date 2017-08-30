@@ -1,6 +1,7 @@
 package com.smart.sso.client;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -8,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.smart.mvc.exception.ServiceException;
+import com.smart.mvc.util.StringUtils;
 import com.smart.sso.rpc.RpcUser;
 
 /**
@@ -18,12 +20,15 @@ import com.smart.sso.rpc.RpcUser;
 public class SsoFilter extends ClientFilter {
 
 	// sso授权回调参数token名称
-	public static final String SSO_TOKEN_NAME = "__vt_param__";
+	//public static final String SSO_TOKEN_NAME = "__vt_param__";
+	public static final String SSO_TOKEN_NAME = "token";
 
 	@Override
 	public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		String token = getLocalToken(request);
+//		String token = getLocalToken(request);
+		String token = request.getParameter("token");
+		System.out.println("token is: " + token);
 		if (token == null) {
 			if (getParameterToken(request) != null) {
 				// 再跳转一次当前URL，以便去掉URL中token参数
@@ -32,8 +37,10 @@ public class SsoFilter extends ClientFilter {
 			else
 				redirectLogin(request, response);
 		}
-		else if (isLogined(token))
+//		else if (isLogined(token))
+		else if (!StringUtils.isBlank(token)) {
 			chain.doFilter(request, response);
+		}
 		else
 			redirectLogin(request, response);
 	}
@@ -59,11 +66,11 @@ public class SsoFilter extends ClientFilter {
 	private String getParameterToken(HttpServletRequest request) throws IOException {
 		String token = request.getParameter(SSO_TOKEN_NAME);
 		if (token != null) {
-			RpcUser rpcUser = authenticationRpcService.findAuthInfo(token);
-			if (rpcUser != null) {
-				invokeAuthenticationInfoInSession(request, token, rpcUser.getAccount());
+//			RpcUser rpcUser = authenticationRpcService.findAuthInfo(token);
+//			if (rpcUser != null) {
+//				invokeAuthenticationInfoInSession(request, token, rpcUser.getAccount());
 				return token;
-			}
+//			}
 		}
 		return null;
 	}
@@ -81,8 +88,11 @@ public class SsoFilter extends ClientFilter {
 		}
 		else {
 			SessionUtils.invalidate(request);
-			String ssoLoginUrl = new StringBuilder().append(ssoServerUrl).append("/login?backUrl=")
-					.append(request.getRequestURL()).append("&appCode=").append(ssoAppCode).toString();
+//			String ssoLoginUrl = new StringBuilder().append(ssoServerUrl).append("/ssoLogin?backUrl=")
+//			.append(request.getRequestURL()).append("&appCode=").append(ssoAppCode).toString();
+			String ssoLoginUrl = new StringBuilder().append(ssoServerUrl).append("/ssoLogin?backUrl=")
+					.append(request.getRequestURL()).append("&appCode=").append(ssoAppCode)
+					.append("&timestamp=").append(new Date().getTime()).append("&token=").toString();
 
 			response.sendRedirect(ssoLoginUrl);
 		}

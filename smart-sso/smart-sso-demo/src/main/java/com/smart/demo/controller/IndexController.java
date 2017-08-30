@@ -21,7 +21,11 @@ public class IndexController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String execute(HttpServletRequest request, Model model) {
 		SessionUser sessionUser = SessionUtils.getSessionUser(request);
-		model.addAttribute("userName", sessionUser.getAccount());
+		if (null != sessionUser) {
+			model.addAttribute("userName", sessionUser.getAccount());
+		} else {
+			model.addAttribute("userName", "管理员");
+		}
 		
 		SessionPermission sessionPermission = SessionUtils.getSessionPermission(request);
 		if (sessionPermission != null){

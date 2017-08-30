@@ -53,9 +53,9 @@ public abstract class ClientFilter implements Filter {
 		if (StringUtils.isBlank(ssoAppCode = ConfigUtils.getProperty("sso.app.code"))) {
 			throw new IllegalArgumentException("ssoAppCode不能为空");
 		}
-		if ((authenticationRpcService = SpringUtils.getBean(AuthenticationRpcService.class)) == null) {
-			throw new IllegalArgumentException("authenticationRpcService注入失败");
-		}
+//		if ((authenticationRpcService = SpringUtils.getBean(AuthenticationRpcService.class)) == null) {
+//			throw new IllegalArgumentException("authenticationRpcService注入失败");
+//		}
 		
 		String excludes = filterConfig.getInitParameter("excludes");
 		if (StringUtils.isNotBlank(excludes)) {
