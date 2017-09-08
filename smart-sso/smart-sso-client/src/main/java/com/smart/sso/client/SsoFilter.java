@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.smart.mvc.exception.ServiceException;
 import com.smart.mvc.util.StringUtils;
 import com.smart.sso.rpc.RpcUser;
+import org.apache.poi.util.StringUtil;
 
 /**
  * 单点登录及Token验证Filter
@@ -26,10 +27,12 @@ public class SsoFilter extends ClientFilter {
 	@Override
 	public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-//		String token = getLocalToken(request);
+		String localToken = getLocalToken(request);
+		System.out.println("localToken is: " + localToken);
+		System.out.println("过滤的请求路径为：" + request.getRequestURL());
 		String token = request.getParameter("token");
 		System.out.println("token is: " + token);
-		if (token == null) {
+		if (StringUtils.isBlank(token) && StringUtils.isBlank(localToken)) {
 			if (getParameterToken(request) != null) {
 				// 再跳转一次当前URL，以便去掉URL中token参数
 				response.sendRedirect(request.getRequestURL().toString());
@@ -38,7 +41,11 @@ public class SsoFilter extends ClientFilter {
 				redirectLogin(request, response);
 		}
 //		else if (isLogined(token))
-		else if (!StringUtils.isBlank(token)) {
+		else if (getLocalToken(request) == null) {
+			// token 不为空，则将token放到session中
+			invokeAuthenticationInfoInSession(request, token, "admin");
+			chain.doFilter(request, response);
+		}else if (getLocalToken(request) != null) {
 			chain.doFilter(request, response);
 		}
 		else
@@ -103,7 +110,7 @@ public class SsoFilter extends ClientFilter {
 	 * 
 	 * @param token
 	 * @param account
-	 * @param profile
+	 * @param request
 	 */
 	private void invokeAuthenticationInfoInSession(HttpServletRequest request, String token, String account) {
 		SessionUtils.setSessionUser(request, new SessionUser(token, account));
