@@ -17,7 +17,7 @@
 		<log.mail.port>25</log.mail.port>
 		<log.mail.username>consukj@163.com</log.mail.username>
 		<log.mail.password>gskj10086!</log.mail.password>
-		<log.mail.to>a466350665@qq.com</log.mail.to>
+		<log.mail.to>1101718534@qq.com</log.mail.to>
 	</properties>
 
 	<modules>
