@@ -40,6 +40,24 @@ public abstract class ClientFilter implements Filter {
 	// 单点登录服务端提供的RPC服务，由Spring容器注入
 	protected AuthenticationRpcService authenticationRpcService;
 
+	// appId
+	protected String appId;
+
+	// appKey
+	protected String appKey;
+
+	// homeUrl
+	protected String homeUrl;
+
+	// unitInfo
+	protected String unitInfo;
+
+	// publicKeyFile
+	protected String publicKeyFile;
+
+	// privateKeyFile
+	protected String privateKeyFile;
+
 	// 排除拦截
 	protected List<String> excludeList = null;
 	
@@ -56,6 +74,30 @@ public abstract class ClientFilter implements Filter {
 //		if ((authenticationRpcService = SpringUtils.getBean(AuthenticationRpcService.class)) == null) {
 //			throw new IllegalArgumentException("authenticationRpcService注入失败");
 //		}
+
+		if (StringUtils.isBlank(appId = ConfigUtils.getProperty("appId"))) {
+			throw new IllegalArgumentException("appId不能为空");
+		}
+
+		if (StringUtils.isBlank(appKey = ConfigUtils.getProperty("appKey"))) {
+			throw new IllegalArgumentException("appKey不能为空");
+		}
+
+		if (StringUtils.isBlank(homeUrl = ConfigUtils.getProperty("homeUrl"))) {
+			throw new IllegalArgumentException("homeUrl不能为空");
+		}
+
+		if (StringUtils.isBlank(unitInfo = ConfigUtils.getProperty("unitInfo"))) {
+			throw new IllegalArgumentException("unitInfo不能为空");
+		}
+
+		if (StringUtils.isBlank(publicKeyFile = ConfigUtils.getProperty("publicKeyFile"))) {
+			throw new IllegalArgumentException("publicKeyFile不能为空");
+		}
+
+		if (StringUtils.isBlank(privateKeyFile = ConfigUtils.getProperty("privateKeyFile"))) {
+			throw new IllegalArgumentException("privateKeyFile不能为空");
+		}
 		
 		String excludes = filterConfig.getInitParameter("excludes");
 		if (StringUtils.isNotBlank(excludes)) {
